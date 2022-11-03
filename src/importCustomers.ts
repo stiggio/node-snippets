@@ -19,9 +19,10 @@ Replace this with your own source of customers, can be a CSV file, a database, e
 async function loadCustomerRecords(): Promise<CustomerRecord[]> {
   try {
     // Fetching data from a dummy users API
+    const numOfUsersToFetch = 30;
     const { data } = await axios.get<
       { id: string; email: string; username: string; first_name: string; last_name: string }[]
-    >('https://random-data-api.com/api/v2/users?size=100');
+    >(`https://random-data-api.com/api/v2/users?size=${numOfUsersToFetch}`);
 
     // Map your users to objects that Stigg can import
     return data.map((user: any) => ({
@@ -98,7 +99,7 @@ export async function run() {
   });
 
   // Importing customers in batches of 10
-  for (const batchOfCustomers of _.chunk(customerRecords, 20)) {
+  for (const batchOfCustomers of _.chunk(customerRecords, 10)) {
     await Promise.all(batchOfCustomers.map(async (customer) => importCustomers(customer, stigg)));
   }
 
